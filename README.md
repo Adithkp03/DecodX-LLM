@@ -21,4 +21,5 @@ Install dependencies from `requirements.txt` and set environment variables for y
 
 ## Usage
 Run the app with:
+uvicorn app:app --host 0.0.0.0 --port 8000 --workers 1
 
