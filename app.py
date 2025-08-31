@@ -13,6 +13,8 @@ from retrieval import build_bm25_index, dual_pass_retrieve
 from answer_generation import generate_answer
 from embedding import embedding_model, executor
 from config import DEFAULT_CONCURRENCY_LIMIT
+from dotenv import load_dotenv
+load_dotenv()  # <-- This will load variables from .env into os.environ
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("hackrx")
