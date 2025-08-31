@@ -1,5 +1,7 @@
-import os
 
+from dotenv import load_dotenv
+load_dotenv()  # Load variables from .env
+import os
 DEFAULT_PASS1_K = int(os.getenv("DEFAULT_PASS1_K", "100"))
 DEFAULT_PASS2_K = int(os.getenv("DEFAULT_PASS2_K", "50"))
 BM25_TOP_K = int(os.getenv("BM25_TOP_K", "50"))
