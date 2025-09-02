@@ -330,8 +330,7 @@ class HackRxLLM {
             const response = await fetch(`${this.apiBaseUrl}/hackrx/run`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     documents: url,

@@ -4,7 +4,6 @@ import time
 from fastapi import FastAPI, HTTPException, Depends, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-
 from models import Req, ImageReq, Resp
 from authorization import verify_token
 from puzzle import fetch_flight_number_async
@@ -142,10 +141,17 @@ async def process_uploaded_files(files: List[UploadFile], questions: List[str], 
 
     processing_info["processing_time_seconds"] = round(time.time() - start_time, 2)
     return answers, processing_info
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
+limiter = Limiter(key_func=get_remote_address)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # EXISTING ENDPOINT - Enhanced with OCR support
 @app.post("/hackrx/run", response_model=Resp)
-async def run(req: Req, token=Depends(verify_token)):
+async def run(req: Req):
     try:
         answers, processing_info = await process(req.documents, req.questions, req.ocr_method)
         return Resp(answers=answers, processing_info=processing_info)
@@ -159,7 +165,7 @@ async def upload_images(
     files: List[UploadFile] = File(...),
     questions: List[str] = Form(...),
     ocr_method: str = Form("auto"),
-    token=Depends(verify_token)
+    # token=Depends(verify_token)
 ):
     """NEW: Upload image files directly"""
     try:
