@@ -15,7 +15,7 @@ class HackRxLLM {
 
     initializeElements() {
         // Main elements
-        this.apiTokenInput = document.getElementById('apiToken');
+        
         this.ocrMethodSelect = document.getElementById('ocrMethod');
         this.documentUrlInput = document.getElementById('documentUrl');
         this.fileInput = document.getElementById('fileInput');
@@ -48,11 +48,6 @@ class HackRxLLM {
             btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
         });
 
-        // Token visibility toggle
-        document.getElementById('toggleToken').addEventListener('click', () => {
-            this.toggleTokenVisibility();
-        });
-
         // File upload
         this.uploadArea.addEventListener('click', () => this.fileInput.click());
         this.uploadArea.addEventListener('dragover', (e) => this.handleDragOver(e));
@@ -81,7 +76,7 @@ class HackRxLLM {
         });
 
         // Save settings on change
-        this.apiTokenInput.addEventListener('change', () => this.saveSettings());
+        
         this.ocrMethodSelect.addEventListener('change', () => this.saveSettings());
     }
 
@@ -108,20 +103,7 @@ class HackRxLLM {
         }
     }
 
-    // Token Management
-    toggleTokenVisibility() {
-        const tokenInput = this.apiTokenInput;
-        const toggleBtn = document.getElementById('toggleToken');
-        const icon = toggleBtn.querySelector('i');
-
-        if (tokenInput.type === 'password') {
-            tokenInput.type = 'text';
-            icon.className = 'fas fa-eye-slash';
-        } else {
-            tokenInput.type = 'password';
-            icon.className = 'fas fa-eye';
-        }
-    }
+    
 
     // File Management
     handleDragOver(e) {
@@ -292,15 +274,10 @@ class HackRxLLM {
     }
 
     async processDocument() {
-        const token = this.apiTokenInput.value.trim();
+        
         const questions = this.getQuestions();
         const ocrMethod = this.ocrMethodSelect.value;
 
-        // Validation
-        if (!token) {
-            this.showToast('Please enter your API token', 'error');
-            return;
-        }
 
         if (questions.length === 0) {
             this.showToast('Please enter at least one question', 'error');
@@ -313,17 +290,17 @@ class HackRxLLM {
                 this.showToast('Please enter a document URL', 'error');
                 return;
             }
-            await this.processUrl(url, questions, ocrMethod, token);
+            await this.processUrl(url, questions, ocrMethod);
         } else {
             if (this.selectedFiles.length === 0) {
                 this.showToast('Please select at least one file', 'error');
                 return;
             }
-            await this.processFiles(this.selectedFiles, questions, ocrMethod, token);
+            await this.processFiles(this.selectedFiles, questions, ocrMethod);
         }
     }
 
-    async processUrl(url, questions, ocrMethod, token) {
+    async processUrl(url, questions, ocrMethod) {
         this.showLoading(true);
 
         try {
@@ -356,7 +333,7 @@ class HackRxLLM {
         }
     }
 
-    async processFiles(files, questions, ocrMethod, token) {
+    async processFiles(files, questions, ocrMethod) {
         this.showLoading(true);
 
         try {
@@ -374,9 +351,6 @@ class HackRxLLM {
 
             const response = await fetch(`${this.apiBaseUrl}/hackrx/upload-images`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
                 body: formData
             });
 
@@ -473,7 +447,7 @@ class HackRxLLM {
     // Settings Management
     saveSettings() {
         const settings = {
-            apiToken: this.apiTokenInput.value,
+            
             ocrMethod: this.ocrMethodSelect.value
         };
         localStorage.setItem('hackrx-settings', JSON.stringify(settings));
@@ -482,7 +456,7 @@ class HackRxLLM {
     loadSavedSettings() {
         try {
             const settings = JSON.parse(localStorage.getItem('hackrx-settings') || '{}');
-            if (settings.apiToken) this.apiTokenInput.value = settings.apiToken;
+            
             if (settings.ocrMethod) this.ocrMethodSelect.value = settings.ocrMethod;
         } catch (error) {
             console.log('No saved settings found');

@@ -5,7 +5,6 @@ from fastapi import FastAPI, HTTPException, Depends, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from models import Req, ImageReq, Resp
-from authorization import verify_token
 from puzzle import fetch_flight_number_async
 from text_extraction import extract_text, smarter_chunking, extract_text_from_file
 from retrieval import build_bm25_index, dual_pass_retrieve
